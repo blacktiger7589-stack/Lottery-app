@@ -1,52 +1,48 @@
-<!-- ===== FINAL LOTTERY APP – FULL VERSION ===== -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>แอพคีย์หวย (สมบูรณ์)</title>
+<title>แอพคีย์หวย</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-body{margin:0;padding:10px;font-family:sans-serif;background:#f2f2f2}
-.container{max-width:1300px;margin:auto;background:#fff;padding:12px;border-radius:12px}
-h2,h3,h4{text-align:center;margin:8px 0}
-input,select,button{padding:10px;font-size:16px;width:100%;margin:4px 0}
-button{background:#2c7;color:#fff;border:none;border-radius:8px}
+body{margin:0;padding:12px;font-family:sans-serif;background:#f2f6f3}
+.container{max-width:1300px;margin:auto;background:#fff;padding:16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+h2,h3,h4{text-align:center;margin:10px 0}
+input,select,button{width:100%;padding:12px;font-size:16px;margin:6px 0;border-radius:10px;border:1px solid #ccc}
+button{background:#2e7d32;color:#fff;border:none}
 button.danger{background:#d9534f}
 button.gray{background:#888}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.flex{display:flex;gap:6px}
+.flex{display:flex;gap:8px}
 .number-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
-.card{border:2px dashed #aaa;padding:10px;margin-top:15px;border-radius:10px;background:#fafafa}
+.card{border:1px dashed #bbb;padding:12px;margin-top:16px;border-radius:14px;background:#fafafa}
 .table-wrap{overflow-x:auto}
-table{border-collapse:collapse;min-width:800px;width:100%;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{border:1px solid #ccc;padding:6px;text-align:center}
-th{background:#eee}
+th{background:#f1f1f1}
 .total{text-align:right;font-size:18px;margin-top:8px}
-.result{background:#eef;padding:6px;border-radius:6px;margin-top:6px}
-.warn{background:#fff3cd;padding:8px;border-radius:6px}
+.result{background:#eef6ff;padding:8px;border-radius:8px;margin-top:6px}
+.warn{background:#fff8e1;padding:10px;border-radius:10px}
 .half{color:#d9534f;font-weight:bold}
-.tag{background:#fdecea;color:#d9534f;padding:4px 8px;border-radius:12px;margin:2px;display:inline-block}
-hr{margin:18px 0}
+.tag{background:#fdecea;color:#d9534f;padding:4px 10px;border-radius:20px;margin:4px;display:inline-block}
+.blessing{text-align:center;margin-top:8px;font-style:italic;color:#2e7d32}
+hr{margin:20px 0}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h2>📱 แอพคีย์หวย (เวอร์ชันสมบูรณ์)</h2>
-<button class="danger" onclick="clearAllData()">🧹 ล้างข้อมูลทั้งหมด</button>
+<h2>📱 แอพคีย์หวย</h2>
+<button class="danger" onclick="clearAll()">🧹 ล้างข้อมูลทั้งหมด</button>
 
-<!-- ===== KEY INPUT ===== -->
 <input id="buyer" placeholder="ชื่อคนซื้อ">
 
 <div class="grid">
-  <select id="digit" onchange="updateType()">
-    <option value="2">เลข 2 ตัว</option>
-    <option value="3">เลข 3 ตัว</option>
-  </select>
-  <select id="type" onchange="updateMoney()"></select>
+  <select id="digit"></select>
+  <select id="type"></select>
 </div>
 
 <div class="number-grid" id="numbers"></div>
@@ -61,13 +57,11 @@ hr{margin:18px 0}
 
 <hr>
 
-<!-- ===== PERSON SUMMARY ===== -->
 <h3>📊 สรุปรายบุคคล</h3>
 <div id="personArea"></div>
 
 <hr>
 
-<!-- ===== HALF CONDITION ===== -->
 <h3>⚠️ เลขเงื่อนไขจ่ายครึ่งเดียว</h3>
 <div class="warn">
   <div class="flex">
@@ -79,7 +73,6 @@ hr{margin:18px 0}
 
 <hr>
 
-<!-- ===== SEARCH ===== -->
 <h3>🏆 ค้นหาเลขที่ถูกรางวัล</h3>
 
 <h4>เลข 2 ตัว</h4>
@@ -101,7 +94,6 @@ hr{margin:18px 0}
 
 <hr>
 
-<!-- ===== OVERALL SUMMARY ===== -->
 <h3>🌍 สรุปภาพรวมทั้งร้าน</h3>
 <div id="overallArea"></div>
 <button onclick="saveImage(overallArea)">📸 บันทึกภาพภาพรวม</button>
@@ -110,106 +102,87 @@ hr{margin:18px 0}
 </div>
 
 <script>
-/* ================= DATA ================= */
-let data = JSON.parse(localStorage.getItem("lottery_data")) || {};
-let halfNums = JSON.parse(localStorage.getItem("half_nums")) || {};
+document.addEventListener("DOMContentLoaded",()=>{
 
-function saveStorage(){
-  localStorage.setItem("lottery_data", JSON.stringify(data));
-  localStorage.setItem("half_nums", JSON.stringify(halfNums));
-}
+const $=id=>document.getElementById(id);
 
-/* ================= INIT ================= */
-function init(){
-  for(let i=0;i<10;i++) numbers.innerHTML+=`<input placeholder="เลข">`;
-  updateType();
-  render();
-  renderHalf();
-}
-init();
+let data=JSON.parse(localStorage.getItem("lottery_data"))||{};
+let halfNums=JSON.parse(localStorage.getItem("half_nums"))||[];
 
-/* ================= UI ================= */
+function save(){localStorage.setItem("lottery_data",JSON.stringify(data));localStorage.setItem("half_nums",JSON.stringify(halfNums));}
+
+for(let i=0;i<10;i++) $("numbers").innerHTML+=`<input placeholder="เลข">`;
+
+$("digit").innerHTML=`<option value="2">เลข 2 ตัว</option><option value="3">เลข 3 ตัว</option>`;
+$("digit").onchange=updateType;
+$("type").onchange=updateMoney;
+
 function updateType(){
-  type.innerHTML="";
-  (digit.value==="2"
-    ?["2 ตัวบน","2 ตัวล่าง","2 ตัวบน/ล่าง"]
-    :["3 ตัวตรง","3 ตัวโต๊ด","3 ตัวตรง/โต๊ด"]
-  ).forEach(t=>type.innerHTML+=`<option>${t}</option>`);
+  $("type").innerHTML="";
+  if($("digit").value==="2"){
+    ["2 ตัวบน","2 ตัวล่าง","2 ตัวบน/ล่าง"].forEach(t=>$("type").innerHTML+=`<option>${t}</option>`);
+  }else{
+    ["3 ตัวตรง","3 ตัวโต๊ด","3 ตัวตรง/โต๊ด"].forEach(t=>$("type").innerHTML+=`<option>${t}</option>`);
+  }
   updateMoney();
 }
 function updateMoney(){
-  const t=type.value;
-  money1.style.display=t.includes("/")?"none":"block";
-  money2.style.display=t.includes("/")?"flex":"none";
+  if($("type").value.includes("/")){
+    $("money1").style.display="none";
+    $("money2").style.display="flex";
+  }else{
+    $("money1").style.display="block";
+    $("money2").style.display="none";
+  }
 }
 
-/* ================= ADD ITEMS ================= */
-function addItems(){
-  const name=buyer.value.trim();
-  if(!name) return alert("กรอกชื่อคนซื้อ");
-  const nums=[...numbers.querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
-  if(!nums.length) return alert("กรอกเลขอย่างน้อย 1 ช่อง");
+updateType();
 
-  data[name]=data[name]||{items:[],total:0};
-
-  nums.forEach(n=>{
-    let r={num:n,top:0,bottom:0,straight:0,tod:0},s=0;
-    if(type.value==="2 ตัวบน"){r.top=+amount1.value;s=r.top}
-    if(type.value==="2 ตัวล่าง"){r.bottom=+amount1.value;s=r.bottom}
-    if(type.value==="2 ตัวบน/ล่าง"){r.top=+amountA.value;r.bottom=+amountB.value;s=r.top+r.bottom}
-    if(type.value==="3 ตัวตรง"){r.straight=+amount1.value;s=r.straight}
-    if(type.value==="3 ตัวโต๊ด"){r.tod=+amount1.value;s=r.tod}
-    if(type.value==="3 ตัวตรง/โต๊ด"){r.straight=+amountA.value;r.tod=+amountB.value;s=r.straight+r.tod}
-    data[name].items.push(r); data[name].total+=s;
-  });
-  clearInputs(); saveStorage(); render();
-}
-
-/* ================= HALF CONDITION ================= */
-function addHalf(){
-  const v=halfInput.value.trim();
-  if(!v||halfNums.includes(v)) return;
-  halfNums.push(v); halfInput.value="";
-  saveStorage(); renderHalf();
-}
-function removeHalf(v){
-  halfNums=halfNums.filter(x=>x!==v);
-  saveStorage(); renderHalf();
-}
-function renderHalf(){
-  halfList.innerHTML="";
-  halfNums.forEach(n=>{
-    halfList.innerHTML+=`<span class="tag">${n} <button onclick="removeHalf('${n}')">❌</button></span>`;
-  });
-}
 function normalize3(n){return n.split("").sort().join("")}
 function isHalf(num){
-  return halfNums.some(h=>{
-    if(h.length===2) return h===num;
-    if(h.length===3) return normalize3(h)===normalize3(num);
-  });
+  return halfNums.some(h=>h.length===num.length && (h.length===2? h===num : normalize3(h)===normalize3(num)));
 }
-function mark(num){return isHalf(num)?`<span class="half">${num}</span>`:num}
+function mark(n){return isHalf(n)?`<span class="half">${n}</span>`:n}
 
-/* ================= RENDER PERSON ================= */
+window.addItems=()=>{
+  const name=$("buyer").value.trim();
+  if(!name) return alert("กรอกชื่อคนซื้อ");
+  const nums=[...$("numbers").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
+  if(!nums.length) return alert("กรอกเลขอย่างน้อย 1 ช่อง");
+  data[name]=data[name]||{items:[],total:0};
+  nums.forEach(n=>{
+    let r={num:n,top:0,bottom:0,straight:0,tod:0},s=0;
+    const t=$("type").value;
+    if(t==="2 ตัวบน"){r.top=+$("amount1").value;s=r.top}
+    if(t==="2 ตัวล่าง"){r.bottom=+$("amount1").value;s=r.bottom}
+    if(t==="2 ตัวบน/ล่าง"){r.top=+$("amountA").value;r.bottom=+$("amountB").value;s=r.top+r.bottom}
+    if(t==="3 ตัวตรง"){r.straight=+$("amount1").value;s=r.straight}
+    if(t==="3 ตัวโต๊ด"){r.tod=+$("amount1").value;s=r.tod}
+    if(t==="3 ตัวตรง/โต๊ด"){r.straight=+$("amountA").value;r.tod=+$("amountB").value;s=r.straight+r.tod}
+    data[name].items.push(r);data[name].total+=s;
+  });
+  clearInputs();save();render();
+};
+
+function clearInputs(){
+  [...$("numbers").querySelectorAll("input")].forEach(i=>i.value="");
+  $("amount1").value=$("amountA").value=$("amountB").value="";
+}
+
 function discount(t){return t>=500?0.15:t>=200?0.10:0}
 
 function render(){
-  personArea.innerHTML="";
+  $("personArea").innerHTML="";
   let overall={};
-
-  for(let name in data){
-    const d=data[name];
-    let dis=discount(d.total);
-    let net=d.total-(d.total*dis);
-
-    personArea.innerHTML+=`
+  for(const name in data){
+    const d=data[name],dis=discount(d.total),net=d.total-(d.total*dis);
+    $("personArea").innerHTML+=`
     <div class="card" id="bill-${name}">
       <b>${name}</b>
       <div class="table-wrap">
       <table>
-        <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>ลบ</th></tr>
-        ${d.items.map((i,idx)=>`
+      <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>ลบ</th></tr>
+      ${d.items.map((i,idx)=>`
         <tr>
           <td>${mark(i.num)}</td>
           <td>${i.top||"-"}</td>
@@ -218,125 +191,66 @@ function render(){
           <td>${i.tod||"-"}</td>
           <td><button onclick="removeItem('${name}',${idx})">❌</button></td>
         </tr>`).join("")}
-      </table>
-      </div>
-      <div class="total">
-        รวม ${d.total} | ลด ${dis*100}% | <b>สุทธิ ${net}</b>
-      </div>
+      </table></div>
+      <div class="total">รวม ${d.total} | ลด ${dis*100}% | <b>สุทธิ ${net}</b></div>
+      <div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
       <button onclick="saveImage(document.getElementById('bill-${name}'))">📸 บันทึกภาพบิล</button>
     </div>`;
-
     d.items.forEach(i=>{
       overall[i.num]=overall[i.num]||{top:0,bottom:0,straight:0,tod:0};
-      overall[i.num].top+=i.top;
-      overall[i.num].bottom+=i.bottom;
-      overall[i.num].straight+=i.straight;
-      overall[i.num].tod+=i.tod;
+      overall[i.num].top+=i.top;overall[i.num].bottom+=i.bottom;
+      overall[i.num].straight+=i.straight;overall[i.num].tod+=i.tod;
     });
   }
-
   renderOverall(overall);
 }
 
-/* ================= REMOVE ================= */
-function removeItem(person,index){
-  data[person].items.splice(index,1);
-  if(!data[person].items.length) delete data[person];
-  saveStorage(); render();
+window.removeItem=(n,i)=>{data[n].items.splice(i,1);if(!data[n].items.length)delete data[n];save();render();};
+
+function renderOverall(o){
+  if(!Object.keys(o).length){$("overallArea").innerHTML="<div class='card'>ยังไม่มีข้อมูล</div>";return;}
+  let sum=0;
+  $("overallArea").innerHTML=`
+  <div class="table-wrap"><table>
+  <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>รวม</th></tr>
+  ${Object.keys(o).map(k=>{const s=o[k].top+o[k].bottom+o[k].straight+o[k].tod;sum+=s;
+    return `<tr><td>${mark(k)}</td><td>${o[k].top||"-"}</td><td>${o[k].bottom||"-"}</td><td>${o[k].straight||"-"}</td><td>${o[k].tod||"-"}</td><td>${s}</td></tr>`}).join("")}
+  </table></div><div class="total">💰 ยอดรวมทั้งร้าน: ${sum} บาท</div>`;
 }
 
-/* ================= OVERALL ================= */
-function renderOverall(overall){
-  let sumAll=0;
-  overallArea.innerHTML=`
-  <div class="table-wrap">
-  <table>
-    <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>รวม</th></tr>
-    ${Object.keys(overall).map(k=>{
-      const s=overall[k].top+overall[k].bottom+overall[k].straight+overall[k].tod;
-      sumAll+=s;
-      return `<tr>
-        <td>${mark(k)}</td>
-        <td>${overall[k].top||"-"}</td>
-        <td>${overall[k].bottom||"-"}</td>
-        <td>${overall[k].straight||"-"}</td>
-        <td>${overall[k].tod||"-"}</td>
-        <td>${s}</td>
-      </tr>`;
-    }).join("")}
-  </table>
-  </div>
-  <div class="total">💰 ยอดรวมทั้งร้าน: ${sumAll} บาท</div>`;
-}
+window.addHalf=()=>{const v=$("halfInput").value.trim();if(v&&!halfNums.includes(v)){halfNums.push(v);$("halfInput").value="";save();renderHalf();}};
+window.removeHalf=v=>{halfNums=halfNums.filter(x=>x!==v);save();renderHalf();};
+function renderHalf(){$("halfList").innerHTML=halfNums.map(n=>`<span class="tag">${n} <button onclick="removeHalf('${n}')">❌</button></span>`).join("");}
+renderHalf();
 
-/* ================= SEARCH ================= */
-function search2(){
-  search2Result.innerHTML=""; let total=0;
-  const t=win2top.value.trim(),b=win2bottom.value.trim();
-  for(let n in data){
+window.search2=()=>{
+  $("search2Result").innerHTML="";let total=0;
+  for(const n in data){
     data[n].items.forEach(i=>{
-      if(t&&i.num===t&&i.top>0){
-        let p=i.top*70; if(isHalf(t)) p/=2;
-        total+=p; search2Result.innerHTML+=`<div class="result">👤 ${n} | ${mark(t)} บน | จ่าย ${p}</div>`;
-      }
-      if(b&&i.num===b&&i.bottom>0){
-        let p=i.bottom*70; if(isHalf(b)) p/=2;
-        total+=p; search2Result.innerHTML+=`<div class="result">👤 ${n} | ${mark(b)} ล่าง | จ่าย ${p}</div>`;
-      }
+      if($("win2top").value&&i.num===$("win2top").value&&i.top){let p=i.top*70;if(isHalf(i.num))p/=2;total+=p;$("search2Result").innerHTML+=`<div class="result">${n} ${mark(i.num)} บน จ่าย ${p}</div>`;}
+      if($("win2bottom").value&&i.num===$("win2bottom").value&&i.bottom){let p=i.bottom*70;if(isHalf(i.num))p/=2;total+=p;$("search2Result").innerHTML+=`<div class="result">${n} ${mark(i.num)} ล่าง จ่าย ${p}</div>`;}
     });
   }
-  search2Result.innerHTML+=`<div class="total">รวมจ่าย ${total} บาท</div>`;
-}
+  $("search2Result").innerHTML+=`<div class="total">รวมจ่าย ${total}</div>`;
+};
 
-function search3(){
-  search3Result.innerHTML=""; let total=0;
-  const num=win3.value.trim(),norm=normalize3(num);
-  for(let n in data){
-    data[n].items.forEach(i=>{
-      if(i.num===num&&i.straight>0){
-        let p=i.straight*500; if(isHalf(num)) p/=2;
-        total+=p; search3Result.innerHTML+=`<div class="result">👤 ${n} | ${mark(num)} ตรง | จ่าย ${p}</div>`;
-      }
-      if(i.tod>0&&normalize3(i.num)===norm){
-        let p=i.tod*100; if(isHalf(num)) p/=2;
-        total+=p; search3Result.innerHTML+=`<div class="result">👤 ${n} | ${mark(i.num)} โต๊ด | จ่าย ${p}</div>`;
-      }
+window.search3=()=>{
+  $("search3Result").innerHTML="";let total=0;const w=$("win3").value,n=normalize3(w);
+  for(const name in data){
+    data[name].items.forEach(i=>{
+      if(i.num===w&&i.straight){let p=i.straight*500;if(isHalf(w))p/=2;total+=p;$("search3Result").innerHTML+=`<div class="result">${name} ${mark(w)} ตรง จ่าย ${p}</div>`;}
+      if(i.tod&&normalize3(i.num)===n){let p=i.tod*100;if(isHalf(w))p/=2;total+=p;$("search3Result").innerHTML+=`<div class="result">${name} ${mark(i.num)} โต๊ด จ่าย ${p}</div>`;}
     });
   }
-  search3Result.innerHTML+=`<div class="total">รวมจ่าย ${total} บาท</div>`;
-}
+  $("search3Result").innerHTML+=`<div class="total">รวมจ่าย ${total}</div>`;
+};
 
-/* ================= UTIL ================= */
-function saveImage(el){
-  html2canvas(el).then(c=>{
-    const a=document.createElement("a");
-    a.href=c.toDataURL("image/png");
-    a.download="summary.png";
-    a.click();
-  });
-}
-function exportCSV(){
-  let csv="เลข,บน,ล่าง,ตรง,โต๊ด,รวม\n";
-  document.querySelectorAll("#overallArea table tr").forEach((r,i)=>{
-    if(i===0) return;
-    csv+=[...r.children].map(td=>td.innerText).join(",")+"\n";
-  });
-  const a=document.createElement("a");
-  a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
-  a.download="summary.csv";
-  a.click();
-}
-function clearInputs(){
-  [...numbers.querySelectorAll("input")].forEach(i=>i.value="");
-  amount1.value=amountA.value=amountB.value="";
-}
-function clearAllData(){
-  if(!confirm("ล้างข้อมูลทั้งหมด?")) return;
-  if(!confirm("ยืนยันล้างข้อมูลทั้งหมดจริง ๆ ?")) return;
-  data={}; halfNums=[];
-  localStorage.clear(); render(); renderHalf();
-}
+window.saveImage=el=>html2canvas(el).then(c=>{const a=document.createElement("a");a.href=c.toDataURL();a.download="result.png";a.click();});
+window.exportCSV=()=>{let csv="เลข,บน,ล่าง,ตรง,โต๊ด,รวม\n";document.querySelectorAll("#overallArea tr").forEach((r,i)=>{if(i)csv+=[...r.children].map(td=>td.innerText).join(",")+"\n"});const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="summary.csv";a.click();};
+window.clearAll=()=>{if(confirm("ล้างข้อมูลทั้งหมด?")&&confirm("ยืนยันอีกครั้ง")){data={};halfNums=[];localStorage.clear();render();renderHalf();}};
+
+render();
+});
 </script>
-
 </body>
 </html>
