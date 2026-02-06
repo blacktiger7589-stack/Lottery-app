@@ -4,92 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>แอพคีย์หวย</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  padding:12px;
-  font-family:sans-serif;
-  background:#f2f6f3;
-}
-.container{
-  max-width:1100px;
-  margin:auto;
-  background:#fff;
-  padding:16px;
-  border-radius:16px;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
-}
-h2,h3{
-  text-align:center;
-  margin:10px 0;
-}
-input,select,button{
-  width:100%;
-  padding:12px;
-  font-size:16px;
-  margin:6px 0;
-  border-radius:10px;
-  border:1px solid #ccc;
-}
-button{
-  background:#2e7d32;
-  color:#fff;
-  border:none;
-}
+body{margin:0;padding:12px;font-family:sans-serif;background:#f3f9f4}
+.container{max-width:1200px;margin:auto;background:#fff;padding:14px;border-radius:16px}
+input,select,button{width:100%;padding:12px;margin:6px 0;font-size:16px}
+button{background:#2e7d32;color:#fff;border:none;border-radius:10px}
+button.danger{background:#d9534f}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .flex{display:flex;gap:8px}
-.number-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
-  gap:6px;
-}
-.card{
-  border:1px dashed #bbb;
-  padding:12px;
-  margin-top:14px;
-  border-radius:14px;
-  background:#fafafa;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-}
-th,td{
-  border:1px solid #ccc;
-  padding:6px;
-  text-align:center;
-}
-.blessing{
-  text-align:center;
-  margin-top:8px;
-  font-style:italic;
-  color:#2e7d32;
-}
-.total{
-  text-align:right;
-  font-size:17px;
-  margin-top:6px;
-}
-hr{margin:20px 0}
+.number-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
+.card{border:1px dashed #aaa;padding:10px;border-radius:12px;margin-top:14px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ccc;padding:6px;text-align:center}
+.blessing{text-align:center;font-style:italic;color:#2e7d32;margin-top:8px}
 </style>
 </head>
 
 <body>
 <div class="container">
-
 <h2>📱 แอพคีย์หวย</h2>
 
-<!-- ===== INPUT ===== -->
 <input id="buyer" placeholder="ชื่อคนซื้อ">
 
 <div class="grid">
-  <select id="digit">
-    <option value="2">เลข 2 ตัว</option>
-    <option value="3">เลข 3 ตัว</option>
-  </select>
-
+  <select id="digit"></select>
   <select id="type"></select>
 </div>
 
@@ -104,47 +44,44 @@ hr{margin:20px 0}
   <input id="amountB" type="number" placeholder="ช่องที่ 2">
 </div>
 
-<button id="addBtn">➕ เพิ่มรายการ</button>
-
-<hr>
+<button onclick="addItems()">➕ เพิ่มรายการ</button>
 
 <h3>📊 สรุปรายบุคคล</h3>
 <div id="personArea"></div>
-
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", ()=>{
 
-/* ===== ELEMENT ===== */
-const buyer = document.getElementById("buyer");
 const digit = document.getElementById("digit");
 const type = document.getElementById("type");
 const numbers = document.getElementById("numbers");
 const money1 = document.getElementById("money1");
 const money2 = document.getElementById("money2");
+const buyer = document.getElementById("buyer");
 const amount1 = document.getElementById("amount1");
 const amountA = document.getElementById("amountA");
 const amountB = document.getElementById("amountB");
-const addBtn = document.getElementById("addBtn");
 const personArea = document.getElementById("personArea");
 
-/* ===== DATA ===== */
 let data = JSON.parse(localStorage.getItem("lottery_data")) || {};
 
-/* ===== INIT ===== */
-for(let i=0;i<10;i++){
-  numbers.innerHTML += `<input placeholder="เลข">`;
+function save(){
+  localStorage.setItem("lottery_data", JSON.stringify(data));
 }
-updateType();
-render();
 
-/* ===== EVENTS ===== */
-digit.addEventListener("change",updateType);
-type.addEventListener("change",updateMoney);
-addBtn.addEventListener("click",addItems);
+function init(){
+  digit.innerHTML = `
+    <option value="2">เลข 2 ตัว</option>
+    <option value="3">เลข 3 ตัว</option>`;
+  for(let i=0;i<10;i++) numbers.innerHTML+=`<input placeholder="เลข">`;
+  updateType();
+  render();
+}
 
-/* ===== FUNCTIONS ===== */
+digit.onchange = updateType;
+type.onchange = updateMoney;
+
 function updateType(){
   type.innerHTML="";
   if(digit.value==="2"){
@@ -171,65 +108,37 @@ function updateMoney(){
   }
 }
 
-function addItems(){
-  const name = buyer.value.trim();
-  if(!name) return alert("กรอกชื่อคนซื้อ");
+window.addItems = function(){
+  if(!buyer.value.trim()) return alert("กรอกชื่อคนซื้อ");
+  const nums=[...numbers.querySelectorAll("input")].map(i=>i.value).filter(Boolean);
+  if(!nums.length) return alert("กรอกเลข");
 
-  const nums = [...numbers.querySelectorAll("input")]
-    .map(i=>i.value.trim())
-    .filter(Boolean);
-
-  if(nums.length===0) return alert("กรอกเลขอย่างน้อย 1 ช่อง");
-
-  data[name] = data[name] || [];
-
+  data[buyer.value] = data[buyer.value] || [];
   nums.forEach(n=>{
-    data[name].push({
+    data[buyer.value].push({
       num:n,
       type:type.value,
-      money: type.value.includes("/")
-        ? `${amountA.value}/${amountB.value}`
-        : amount1.value
+      money: type.value.includes("/") ? [amountA.value,amountB.value] : [amount1.value]
     });
   });
-
-  localStorage.setItem("lottery_data",JSON.stringify(data));
-  clearInputs();
+  save();
   render();
-}
-
-function clearInputs(){
-  [...numbers.querySelectorAll("input")].forEach(i=>i.value="");
-  amount1.value="";
-  amountA.value="";
-  amountB.value="";
 }
 
 function render(){
   personArea.innerHTML="";
-  for(const name in data){
+  for(let name in data){
     personArea.innerHTML += `
       <div class="card">
         <b>${name}</b>
-        <table>
-          <tr><th>เลข</th><th>รายการ</th><th>เงิน</th></tr>
-          ${data[name].map(i=>`
-            <tr>
-              <td>${i.num}</td>
-              <td>${i.type}</td>
-              <td>${i.money}</td>
-            </tr>
-          `).join("")}
-        </table>
-        <div class="blessing">
-          ✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨
-        </div>
+        <ul>${data[name].map(i=>`<li>${i.num} (${i.type})</li>`).join("")}</ul>
+        <div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
       </div>`;
   }
 }
 
+init();
 });
 </script>
-
 </body>
 </html>
