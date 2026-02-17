@@ -1,272 +1,1132 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>แอพคีย์หวย</title>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แอพคีย์หวย</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<style>
-body{margin:0;padding:12px;font-family:sans-serif;background:#f2f6f3}
-.container{max-width:1200px;margin:auto;background:#fff;padding:16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-h2,h3,h4{text-align:center;margin:10px 0}
-input,button{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:1px solid #ccc}
-button{background:#2e7d32;color:#fff;border:none;cursor:pointer}
-button.danger{background:#d9534f}
-button.gray{background:#888}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.card{border:1px dashed #bbb;padding:12px;margin-top:16px;border-radius:14px;background:#fafafa}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{border:1px solid #ccc;padding:4px 6px;text-align:center}
-th{background:#f1f1f1}
-.total{text-align:left;margin-top:6px;font-weight:bold}
-.blessing{text-align:center;margin-top:6px;font-style:italic;color:#2e7d32}
-.no-print{display:table-cell}
-.hide-for-image .no-print{display:none !important}
-.half{color:#d9534f;font-weight:bold}
-.tag{background:#fdecea;color:#d9534f;padding:4px 8px;border-radius:20px;margin:4px;display:inline-block}
-hr{margin:20px 0}
-</style>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      font-family: sans-serif;
+      background: #f2f6f3;
+      overflow-y: auto;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      background: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h2, h3, h4 {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      margin: 4px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1b5e20;
+    }
+
+    button.danger {
+      background: #d9534f;
+    }
+
+    button.danger:hover {
+      background: #ac2925;
+    }
+
+    button.gray {
+      background: #888;
+    }
+
+    button.gray:hover {
+      background: #666;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .flex {
+      display: flex;
+      gap: 6px;
+    }
+
+    .card {
+      border: 1px dashed #bbb;
+      padding: 12px;
+      margin-top: 16px;
+      border-radius: 14px;
+      background: #fafafa;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+
+    .total {
+      text-align: left;
+      font-size: 16px;
+      margin-top: 6px;
+    }
+
+    .blessing {
+      text-align: center;
+      margin-top: 8px;
+      font-style: italic;
+      color: #2e7d32;
+    }
+
+    .result {
+      background: #eef6ff;
+      padding: 6px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    .warn {
+      background: #fff8e1;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .tag {
+      background: #fdecea;
+      color: #d9534f;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 4px;
+      display: inline-block;
+    }
+
+    .tag button {
+      background: none;
+      border: none;
+      color: #d9534f;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      font-size: 14px;
+    }
+
+    .half {
+      color: #d9534f;
+      font-weight: bold;
+    }
+
+    .no-print {
+      display: table-cell;
+    }
+
+    .hide-for-image .no-print {
+      display: none !important;
+    }
+
+    hr {
+      margin: 20px 0;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+      border-top-color: #2e7d32;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .button-group button {
+      flex: 1;
+      margin: 0;
+    }
+
+    .lottery-item {
+      border: 2px solid #2e7d32;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: #f0f8f5;
+      transition: all 0.3s;
+    }
+
+    .lottery-item:hover {
+      background: #e0f2e9;
+    }
+
+    .lottery-item-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .lottery-item-type {
+      background: #2e7d32;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .lottery-item-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1b5e20;
+    }
+
+    .lottery-item-amounts {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .amount-input-inline {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .amount-input-inline label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1b5e20;
+      white-space: nowrap;
+    }
+
+    .amount-input-inline input {
+      width: 50px;
+      padding: 6px;
+      font-size: 12px;
+      border: 1px solid #2e7d32;
+      border-radius: 4px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .lottery-item-remove {
+      background: #d9534f;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .lottery-item-remove:hover {
+      background: #ac2925;
+    }
+
+    .items-list-container {
+      border: 2px dashed #2e7d32;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #f9fff8;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .items-list-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2e7d32;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .items-list-empty {
+      color: #999;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 0;
+      margin-bottom: 12px;
+      border-bottom: 3px solid #2e7d32;
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: #ddd;
+      color: #333;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab-button.active {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      background: linear-gradient(135deg, #f0f8f5 0%, #e8f5e9 100%);
+      padding: 16px;
+      border-radius: 12px;
+      border: 2px solid #2e7d32;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .number-input-wrapper {
+      background: white;
+      padding: 12px;
+      border: 2px solid #2e7d32;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+    }
+
+    .number-input {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      border: 2px solid #2e7d32;
+      border-radius: 6px;
+      margin: 0;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1b5e20;
+    }
+
+    .form-group input,
+    .form-group select {
+      margin: 0;
+      border: 2px solid #2e7d32;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flex {
+        flex-direction: column;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 2px 4px;
+      }
+
+      .number-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .lottery-item-header {
+        flex-direction: column;
+      }
+
+      .lottery-item-amounts {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
+  <div class="container">
+    <h2 id="app-title">📱 แอพคีย์หวย</h2>
+    <button class="danger" id="clear-all-btn">🧹 ล้างข้อมูลทั้งหมด</button>
 
-<h2>📱 แอพคีย์หวย</h2>
-<button class="danger" onclick="clearAll()">🧹 ล้างข้อมูลทั้งหมด</button>
+    <h3>➕ เพิ่มรายการใหม่</h3>
 
-<input id="buyer" placeholder="ชื่อคนซื้อ">
+    <input id="buyer" placeholder="ชื่อคนซื้อ">
 
-<h3>เพิ่มเลข 2 ตัว</h3>
-<div class="grid">
-<input id="num2" placeholder="เลข 2 ตัว">
-<input id="amt2top" type="number" placeholder="บน">
-<input id="amt2bottom" type="number" placeholder="ล่าง">
-</div>
-<button onclick="add2()">➕ เพิ่มเลข 2 ตัว</button>
+    <div class="items-list-container">
+      <span class="items-list-label">📋 รายการที่จะเพิ่ม (กรอกเงินในช่องข้างตัวเลข)</span>
+      <div id="itemsList" class="items-list-empty">ยังไม่มีรายการ</div>
+    </div>
 
-<h3>เพิ่มเลข 3 ตัว</h3>
-<div class="grid">
-<input id="num3" placeholder="เลข 3 ตัว">
-<input id="amt3straight" type="number" placeholder="ตรง">
-<input id="amt3tod" type="number" placeholder="โต๊ด">
-</div>
-<button onclick="add3()">➕ เพิ่มเลข 3 ตัว</button>
+    <h4 style="margin-top: 16px;">เพิ่มเลขใหม่</h4>
 
-<hr>
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="2">📊 เลข 2 ตัว</button>
+      <button class="tab-button" data-tab="3">🎰 เลข 3 ตัว</button>
+    </div>
 
-<h3>📊 สรุปรายบุคคล</h3>
-<div id="personArea"></div>
+    <!-- Tab Content - 2 Digit -->
+    <div id="tab-2" class="tab-content active">
+      <label style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1b5e20;">📝 ใส่เลข 2 ตัว (ขึ้นไป 10 ช่อง)</label>
+      
+      <div class="number-grid" id="grid-2"></div>
 
-<hr>
+      <button id="add-2-btn" style="width: 100%; padding: 14px; margin: 0; font-size: 16px; font-weight: 700; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer;">➕ เพิ่มเลข 2 ตัว</button>
+    </div>
 
-<h3>⚠️ เลขเงื่อนไขจ่ายครึ่งเดียว</h3>
-<div class="grid">
-<input id="halfInput" placeholder="เลข">
-<button onclick="addHalf()">เพิ่ม</button>
-</div>
-<div id="halfList"></div>
+    <!-- Tab Content - 3 Digit -->
+    <div id="tab-3" class="tab-content">
+      <label style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1b5e20;">🎯 ใส่เลข 3 ตัว (ขึ้นไป 10 ช่อง)</label>
+      
+      <div class="number-grid" id="grid-3"></div>
 
-<hr>
+      <button id="add-3-btn" style="width: 100%; padding: 14px; margin: 0; font-size: 16px; font-weight: 700; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer;">➕ เพิ่มเลข 3 ตัว</button>
+    </div>
 
-<h3>🏆 ค้นหาเลขที่ถูกรางวัล</h3>
+    <div class="button-group">
+      <button id="add-items-btn" style="margin: 0;">➕ บันทึกทั้งหมด</button>
+      <button id="clear-items-btn" class="danger" style="margin: 0;">🔄 ล้างรายการ</button>
+    </div>
 
-<h4>เลข 2 ตัว</h4>
-<div class="grid">
-<input id="win2top" placeholder="บน">
-<input id="win2bottom" placeholder="ล่าง">
-</div>
-<button onclick="search2()">ค้นหา</button>
-<div id="search2Result" class="card"></div>
+    <hr>
 
-<h4>เลข 3 ตัว</h4>
-<input id="win3" placeholder="เลข 3 ตัว">
-<button onclick="search3()">ค้นหา</button>
-<div id="search3Result" class="card"></div>
+    <h3>📊 สรุปรายบุคคล</h3>
+    <div id="personArea"></div>
 
-<hr>
+    <hr>
 
-<h3>🌍 สรุปภาพรวมทั้งร้าน</h3>
-<div id="overallArea"></div>
-<button class="gray" onclick="saveImage(overallArea)">📸 บันทึกภาพ</button>
+    <h3>⚠️ เลขเงื่อนไขจ่ายครึ่งเดียว</h3>
+    <div class="warn">
+      <div class="flex">
+        <input id="halfInput" placeholder="เลข 2 หรือ 3 ตัว">
+        <button id="add-half-btn" style="width: auto; flex: 1;">เพิ่ม</button>
+      </div>
+      <div id="halfList"></div>
+    </div>
 
-</div>
+    <hr>
 
-<script>
-const $=id=>document.getElementById(id);
+    <h3>🏆 ค้นหาเลขที่ถูกรางวัล</h3>
 
-let data=JSON.parse(localStorage.getItem("lottery_data")||"{}");
-let halfNums=JSON.parse(localStorage.getItem("half_nums")||"[]");
+    <h4>เลข 2 ตัว</h4>
+    <div class="grid">
+      <input id="win2top" placeholder="เลขบน">
+      <input id="win2bottom" placeholder="เลขล่าง">
+    </div>
+    <button id="search-2-btn">ค้นหา</button>
+    <div id="search2Result" class="card"></div>
+    <button id="save-2-btn" class="gray">📸 บันทึกภาพ</button>
 
-function save(){
-localStorage.setItem("lottery_data",JSON.stringify(data));
-localStorage.setItem("half_nums",JSON.stringify(halfNums));
-}
+    <hr>
 
-function discount(t){return t>=500?0.15:t>=200?0.10:0}
-function normalize3(n){return n.split("").sort().join("")}
-function isHalf(n){
-return halfNums.some(h=>h.length===n.length&&(h.length===2?h===n:normalize3(h)===normalize3(n)));
-}
-function mark(n){return isHalf(n)?`<span class="half">${n}</span>`:n}
+    <h4>เลข 3 ตัว</h4>
+    <input id="win3" placeholder="เลข 3 ตัว">
+    <button id="search-3-btn">ค้นหา</button>
+    <div id="search3Result" class="card"></div>
+    <button id="save-3-btn" class="gray">📸 บันทึกภาพ</button>
 
-function add2(){
-const name=$("buyer").value.trim();
-if(!name)return alert("กรอกชื่อก่อน");
-const num=$("num2").value.trim();
-if(!num)return;
-data[name]=data[name]||[];
-data[name].push({num,top:+$("amt2top").value||0,bottom:+$("amt2bottom").value||0,straight:0,tod:0});
-save();render();
-$("num2").value="";$("amt2top").value="";$("amt2bottom").value="";
-}
+    <hr>
 
-function add3(){
-const name=$("buyer").value.trim();
-if(!name)return alert("กรอกชื่อก่อน");
-const num=$("num3").value.trim();
-if(!num)return;
-data[name]=data[name]||[];
-data[name].push({num,top:0,bottom:0,straight:+$("amt3straight").value||0,tod:+$("amt3tod").value||0});
-save();render();
-$("num3").value="";$("amt3straight").value="";$("amt3tod").value="";
-}
+    <h3>🌍 สรุปภาพรวมทั้งร้าน</h3>
+    <div id="overallArea"></div>
+    <div class="button-group">
+      <button id="save-overall-btn" class="gray">📸 บันทึกภาพ</button>
+      <button id="export-csv-btn" class="gray">📄 ส่งออก Excel</button>
+    </div>
+  </div>
 
-function render(){
-$("personArea").innerHTML="";
-let overall={};
-for(const name in data){
-let total=0;
-let html=`<div class="card"><b>${name}</b><table>
-<tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th class="no-print">ลบ</th></tr>`;
-data[name].forEach((i,idx)=>{
-let s=i.top+i.bottom+i.straight+i.tod;
-total+=s;
-overall[i.num]=overall[i.num]||{top:0,bottom:0,straight:0,tod:0};
-overall[i.num].top+=i.top;
-overall[i.num].bottom+=i.bottom;
-overall[i.num].straight+=i.straight;
-overall[i.num].tod+=i.tod;
-html+=`<tr>
-<td>${mark(i.num)}</td>
-<td>${i.top||"-"}</td>
-<td>${i.bottom||"-"}</td>
-<td>${i.straight||"-"}</td>
-<td>${i.tod||"-"}</td>
-<td class="no-print"><button onclick="removeItem('${name}',${idx})">❌</button></td>
-</tr>`;
-});
-let dis=discount(total);
-let net=total-(total*dis);
-html+=`</table>
-<div class="total">รวม ${total} | ลด ${dis*100}% | สุทธิ ${net}</div>
-<div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
-<button onclick="saveImage(this.parentElement)">📸 บันทึกภาพบิล</button>
-</div>`;
-$("personArea").innerHTML+=html;
-}
-renderOverall(overall);
-}
+  <script>
+    const $ = (id) => document.getElementById(id);
 
-function renderOverall(o){
-if(!Object.keys(o).length){$("overallArea").innerHTML="ยังไม่มีข้อมูล";return;}
-let sum=0;
-let html="<table><tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>รวม</th></tr>";
-for(const k in o){
-let s=o[k].top+o[k].bottom+o[k].straight+o[k].tod;
-sum+=s;
-html+=`<tr>
-<td>${mark(k)}</td>
-<td>${o[k].top||"-"}</td>
-<td>${o[k].bottom||"-"}</td>
-<td>${o[k].straight||"-"}</td>
-<td>${o[k].tod||"-"}</td>
-<td>${s}</td></tr>`;
-}
-html+="</table><div class='total'>ยอดรวมทั้งร้าน "+sum+"</div>";
-$("overallArea").innerHTML=html;
-}
+    const defaultConfig = {
+      app_title: '📱 แอพคีย์หวย',
+      currency_symbol: 'บาท'
+    };
 
-function removeItem(name,idx){
-data[name].splice(idx,1);
-if(!data[name].length)delete data[name];
-save();render();
-}
+    let config = { ...defaultConfig };
+    let allData = [];
+    let halfNums = [];
+    let itemsToAdd = [];
 
-function addHalf(){
-const v=$("halfInput").value.trim();
-if(!v)return;
-if(!halfNums.includes(v))halfNums.push(v);
-$("halfInput").value="";
-save();renderHalf();render();
-}
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data || [];
+        renderPersonArea();
+        renderOverall();
+      }
+    };
 
-function renderHalf(){
-$("halfList").innerHTML=halfNums.map(n=>`<span class="tag">${n} <button onclick="removeHalf('${n}')">❌</button></span>`).join("");
-}
+    async function initializeApp() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...newConfig };
+            $('app-title').textContent = config.app_title || defaultConfig.app_title;
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) =>
+            new Map([
+              ['app_title', cfg.app_title || defaultConfig.app_title],
+              ['currency_symbol', cfg.currency_symbol || defaultConfig.currency_symbol]
+            ])
+        });
+      }
 
-function removeHalf(n){
-halfNums=halfNums.filter(x=>x!==n);
-save();renderHalf();render();
-}
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
 
-function search2(){
-let total=0;$("search2Result").innerHTML="";
-for(const name in data){
-data[name].forEach(i=>{
-if($("win2top").value&&i.num===$("win2top").value&&i.top){
-let p=i.top*70;if(isHalf(i.num))p/=2;total+=p;
-$("search2Result").innerHTML+=`${name} ${mark(i.num)} บน จ่าย ${p}<br>`;
-}
-if($("win2bottom").value&&i.num===$("win2bottom").value&&i.bottom){
-let p=i.bottom*70;if(isHalf(i.num))p/=2;total+=p;
-$("search2Result").innerHTML+=`${name} ${mark(i.num)} ล่าง จ่าย ${p}<br>`;
-}
-});
-}
-$("search2Result").innerHTML+=`<div class='total'>รวมจ่าย ${total}</div>`;
-}
+      setupEventListeners();
+      createNumberInputs();
+      renderHalf();
+    }
 
-function search3(){
-let total=0;$("search3Result").innerHTML="";
-const w=$("win3").value;
-for(const name in data){
-data[name].forEach(i=>{
-if(i.num===w&&i.straight){
-let p=i.straight*500;if(isHalf(w))p/=2;total+=p;
-$("search3Result").innerHTML+=`${name} ${mark(w)} ตรง จ่าย ${p}<br>`;
-}
-if(i.tod&&normalize3(i.num)===normalize3(w)){
-let p=i.tod*100;if(isHalf(w))p/=2;total+=p;
-$("search3Result").innerHTML+=`${name} ${mark(i.num)} โต๊ด จ่าย ${p}<br>`;
-}
-});
-}
-$("search3Result").innerHTML+=`<div class='total'>รวมจ่าย ${total}</div>`;
-}
+    function createNumberInputs() {
+      const grid2 = $('grid-2');
+      const grid3 = $('grid-3');
+      
+      grid2.innerHTML = '';
+      grid3.innerHTML = '';
 
-function saveImage(el){
-el.classList.add("hide-for-image");
-html2canvas(el).then(c=>{
-const a=document.createElement("a");
-a.href=c.toDataURL();
-a.download="result.png";
-a.click();
-el.classList.remove("hide-for-image");
-});
-}
+      for (let i = 0; i < 10; i++) {
+        const wrapper2 = document.createElement('div');
+        wrapper2.className = 'number-input-wrapper';
+        wrapper2.innerHTML = `<input type="text" placeholder="เลข ${i + 1}" maxlength="2" class="number-input number-input-2" value="">`;
+        grid2.appendChild(wrapper2);
 
-function clearAll(){
-if(confirm("ล้างข้อมูลทั้งหมด?")&&confirm("ยืนยันอีกครั้ง?")){
-data={};halfNums=[];
-localStorage.removeItem("lottery_data");
-localStorage.removeItem("half_nums");
-render();renderHalf();
-}
-}
+        const wrapper3 = document.createElement('div');
+        wrapper3.className = 'number-input-wrapper';
+        wrapper3.innerHTML = `<input type="text" placeholder="เลข ${i + 1}" maxlength="3" class="number-input number-input-3" value="">`;
+        grid3.appendChild(wrapper3);
+      }
+    }
 
-render();
-renderHalf();
-</script>
-</body>
+    function setupEventListeners() {
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          const tab = e.target.dataset.tab;
+          $(`tab-${tab}`).classList.add('active');
+        });
+      });
+
+      $('add-2-btn').addEventListener('click', addLottery2);
+      $('add-3-btn').addEventListener('click', addLottery3);
+      $('add-items-btn').addEventListener('click', addAllItems);
+      $('clear-items-btn').addEventListener('click', clearItemsList);
+      $('add-half-btn').addEventListener('click', addHalf);
+      $('search-2-btn').addEventListener('click', search2);
+      $('search-3-btn').addEventListener('click', search3);
+      $('save-2-btn').addEventListener('click', () => saveImage($('search2Result'), 'search-2'));
+      $('save-3-btn').addEventListener('click', () => saveImage($('search3Result'), 'search-3'));
+      $('save-overall-btn').addEventListener('click', () => saveImage($('overallArea'), 'overall'));
+      $('export-csv-btn').addEventListener('click', exportCSV);
+      $('clear-all-btn').addEventListener('click', clearAll);
+    }
+
+    function addLottery2() {
+      const numbers = [...document.querySelectorAll('.number-input-2')]
+        .map(i => i.value.trim())
+        .filter(Boolean);
+
+      if (numbers.length === 0) {
+        showMessage('กรุณาใส่เลข 2 ตัว', 'error');
+        return;
+      }
+
+      numbers.forEach(num => {
+        itemsToAdd.push({
+          num: num,
+          type: 'เลข 2 ตัว',
+          amountTop: 0,
+          amountBottom: 0,
+          amountStraight: 0,
+          amountTod: 0
+        });
+      });
+
+      document.querySelectorAll('.number-input-2').forEach(i => i.value = '');
+      renderItemsList();
+      showMessage(`เพิ่มเลข 2 ตัว ${numbers.length} ตัวแล้ว`, 'success');
+    }
+
+    function addLottery3() {
+      const numbers = [...document.querySelectorAll('.number-input-3')]
+        .map(i => i.value.trim())
+        .filter(Boolean);
+
+      if (numbers.length === 0) {
+        showMessage('กรุณาใส่เลข 3 ตัว', 'error');
+        return;
+      }
+
+      numbers.forEach(num => {
+        itemsToAdd.push({
+          num: num,
+          type: 'เลข 3 ตัว',
+          amountTop: 0,
+          amountBottom: 0,
+          amountStraight: 0,
+          amountTod: 0
+        });
+      });
+
+      document.querySelectorAll('.number-input-3').forEach(i => i.value = '');
+      renderItemsList();
+      showMessage(`เพิ่มเลข 3 ตัว ${numbers.length} ตัวแล้ว`, 'success');
+    }
+
+    function renderItemsList() {
+      const list = $('itemsList');
+      if (itemsToAdd.length === 0) {
+        list.innerHTML = '<div class="items-list-empty">ยังไม่มีรายการ</div>';
+        return;
+      }
+
+      let html = '';
+      itemsToAdd.forEach((item, idx) => {
+        if (item.type.includes('2 ตัว')) {
+          html += `
+            <div class="lottery-item">
+              <div class="lottery-item-header">
+                <div class="lottery-item-number">${item.num}</div>
+                <div class="lottery-item-type">${item.type}</div>
+                <div class="lottery-item-amounts">
+                  <div class="amount-input-inline">
+                    <label>บน</label>
+                    <input type="number" placeholder="0" value="${item.amountTop || 0}" onchange="window.updateAmount(${idx}, 'top', this.value)">
+                  </div>
+                  <div class="amount-input-inline">
+                    <label>ล่าง</label>
+                    <input type="number" placeholder="0" value="${item.amountBottom || 0}" onchange="window.updateAmount(${idx}, 'bottom', this.value)">
+                  </div>
+                </div>
+                <button class="lottery-item-remove" onclick="window.removeFromList(${idx})">ลบ</button>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="lottery-item">
+              <div class="lottery-item-header">
+                <div class="lottery-item-number">${item.num}</div>
+                <div class="lottery-item-type">${item.type}</div>
+                <div class="lottery-item-amounts">
+                  <div class="amount-input-inline">
+                    <label>ตรง</label>
+                    <input type="number" placeholder="0" value="${item.amountStraight || 0}" onchange="window.updateAmount(${idx}, 'straight', this.value)">
+                  </div>
+                  <div class="amount-input-inline">
+                    <label>โต๊ด</label>
+                    <input type="number" placeholder="0" value="${item.amountTod || 0}" onchange="window.updateAmount(${idx}, 'tod', this.value)">
+                  </div>
+                </div>
+                <button class="lottery-item-remove" onclick="window.removeFromList(${idx})">ลบ</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+      list.innerHTML = html;
+    }
+
+    window.updateAmount = (idx, type, value) => {
+      const item = itemsToAdd[idx];
+      const val = parseInt(value) || 0;
+      
+      if (type === 'top') item.amountTop = val;
+      if (type === 'bottom') item.amountBottom = val;
+      if (type === 'straight') item.amountStraight = val;
+      if (type === 'tod') item.amountTod = val;
+    };
+
+    window.removeFromList = (idx) => {
+      itemsToAdd.splice(idx, 1);
+      renderItemsList();
+    };
+
+    function clearItemsList() {
+      itemsToAdd = [];
+      renderItemsList();
+      showMessage('ล้างรายการแล้ว', 'success');
+    }
+
+    async function addAllItems() {
+      const name = $('buyer').value.trim();
+      if (!name) {
+        showMessage('กรุณากรอกชื่อคนซื้อ', 'error');
+        return;
+      }
+
+      if (itemsToAdd.length === 0) {
+        showMessage('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ', 'error');
+        return;
+      }
+
+      const incomplete = itemsToAdd.some(item => {
+        if (item.type.includes('2 ตัว')) {
+          return item.amountTop === 0 && item.amountBottom === 0;
+        } else {
+          return item.amountStraight === 0 && item.amountTod === 0;
+        }
+      });
+
+      if (incomplete) {
+        showMessage('กรุณาระบุเงินให้ครบทุกรายการ', 'error');
+        return;
+      }
+
+      $('add-items-btn').disabled = true;
+      $('add-items-btn').innerHTML = '<span class="loading"></span> กำลังเพิ่ม...';
+
+      for (const item of itemsToAdd) {
+        let record = {
+          buyer_name: name,
+          lottery_number: item.num,
+          lottery_type: item.type,
+          amount_top: item.amountTop || 0,
+          amount_bottom: item.amountBottom || 0,
+          amount_straight: item.amountStraight || 0,
+          amount_tod: item.amountTod || 0,
+          created_at: new Date().toISOString()
+        };
+
+        const result = await window.dataSdk.create(record);
+        if (!result.isOk) {
+          console.error('Error creating record:', result.error);
+        }
+      }
+
+      itemsToAdd = [];
+      renderItemsList();
+      $('buyer').value = '';
+      $('add-items-btn').disabled = false;
+      $('add-items-btn').innerHTML = '➕ บันทึกทั้งหมด';
+      showMessage('เพิ่มข้อมูลสำเร็จ!', 'success');
+    }
+
+    function normalize3(n) {
+      return n.split('').sort().join('');
+    }
+
+    function isHalf(num) {
+      return halfNums.some((h) =>
+        h.length === num.length &&
+        (h.length === 2 ? h === num : normalize3(h) === normalize3(num))
+      );
+    }
+
+    function mark(n) {
+      return isHalf(n) ? `<span class="half">${n}</span>` : n;
+    }
+
+    async function addHalf() {
+      const v = $('halfInput').value.trim();
+      if (!v) {
+        showMessage('กรุณากรอกเลข', 'error');
+        return;
+      }
+      if (halfNums.includes(v)) {
+        showMessage('เลขนี้มีอยู่แล้ว', 'error');
+        return;
+      }
+      halfNums.push(v);
+      $('halfInput').value = '';
+      renderHalf();
+      showMessage('เพิ่มเลขจ่ายครึ่งแล้ว', 'success');
+    }
+
+    function removeHalf(num) {
+      halfNums = halfNums.filter((x) => x !== num);
+      renderHalf();
+    }
+
+    function renderHalf() {
+      $('halfList').innerHTML = halfNums
+        .map(
+          (n) =>
+            `<span class="tag">${n} <button onclick="window.removeHalf('${n}')">❌</button></span>`
+        )
+        .join('');
+    }
+
+    window.removeHalf = removeHalf;
+
+    function discount(t) {
+      return t >= 500 ? 0.15 : t >= 200 ? 0.1 : 0;
+    }
+
+    function renderPersonArea() {
+      $('personArea').innerHTML = '';
+
+      if (!allData.length) {
+        $('personArea').innerHTML = '<div class="card">ยังไม่มีข้อมูล</div>';
+        return;
+      }
+
+      const grouped = {};
+      allData.forEach((item) => {
+        if (!grouped[item.buyer_name]) {
+          grouped[item.buyer_name] = [];
+        }
+        grouped[item.buyer_name].push(item);
+      });
+
+      for (const name in grouped) {
+        const items = grouped[name];
+        const total = items.reduce(
+          (sum, item) =>
+            sum +
+            item.amount_top +
+            item.amount_bottom +
+            item.amount_straight +
+            item.amount_tod,
+          0
+        );
+
+        const dis = discount(total);
+        const net = total - total * dis;
+
+        const billId = `bill-${Date.now()}-${Math.random()}`;
+        let html = `
+          <div class="card" id="${billId}">
+            <b>${name}</b>
+            <div class="table-wrap">
+              <table>
+                <tr>
+                  <th>เลข</th>
+                  <th>บน</th>
+                  <th>ล่าง</th>
+                  <th>ตรง</th>
+                  <th>โต๊ด</th>
+                  <th class="no-print">ลบ</th>
+                </tr>
+        `;
+
+        items.forEach((item) => {
+          html += `
+            <tr>
+              <td>${mark(item.lottery_number)}</td>
+              <td>${item.amount_top || '-'}</td>
+              <td>${item.amount_bottom || '-'}</td>
+              <td>${item.amount_straight || '-'}</td>
+              <td>${item.amount_tod || '-'}</td>
+              <td class="no-print"><button onclick="window.deleteItem('${item.__backendId}')" style="width:auto; padding: 5px 8px;">❌</button></td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </table>
+            </div>
+            <div class="total">รวม ${total} | ลด ${dis * 100}% | <b>สุทธิ ${net}</b></div>
+            <div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
+            <button onclick="window.saveBill('${billId}')" class="gray" style="margin-top: 8px;">📸 บันทึกภาพบิล</button>
+          </div>
+        `;
+
+        $('personArea').innerHTML += html;
+      }
+    }
+
+    window.deleteItem = async (backendId) => {
+      const item = allData.find((d) => d.__backendId === backendId);
+      if (item) {
+        const result = await window.dataSdk.delete(item);
+        if (!result.isOk) {
+          console.error('Error deleting item:', result.error);
+        }
+      }
+    };
+
+    window.saveBill = (billId) => {
+      saveImage(document.getElementById(billId), billId);
+    };
+
+    function renderOverall() {
+      if (!allData.length) {
+        $('overallArea').innerHTML = '<div class="card">ยังไม่มีข้อมูล</div>';
+        return;
+      }
+
+      const overall = {};
+      let sum = 0;
+
+      allData.forEach((item) => {
+        if (!overall[item.lottery_number]) {
+          overall[item.lottery_number] = { top: 0, bottom: 0, straight: 0, tod: 0 };
+        }
+        overall[item.lottery_number].top += item.amount_top;
+        overall[item.lottery_number].bottom += item.amount_bottom;
+        overall[item.lottery_number].straight += item.amount_straight;
+        overall[item.lottery_number].tod += item.amount_tod;
+      });
+
+      let tableHtml = `
+        <div class="table-wrap">
+          <table>
+            <tr>
+              <th>เลข</th>
+              <th>บน</th>
+              <th>ล่าง</th>
+              <th>ตรง</th>
+              <th>โต๊ด</th>
+              <th>รวม</th>
+            </tr>
+      `;
+
+      for (const k in overall) {
+        const s = overall[k].top + overall[k].bottom + overall[k].straight + overall[k].tod;
+        sum += s;
+        tableHtml += `
+          <tr>
+            <td>${mark(k)}</td>
+            <td>${overall[k].top || '-'}</td>
+            <td>${overall[k].bottom || '-'}</td>
+            <td>${overall[k].straight || '-'}</td>
+            <td>${overall[k].tod || '-'}</td>
+            <td>${s}</td>
+          </tr>
+        `;
+      }
+
+      tableHtml += `
+          </table>
+        </div>
+        <div class="total">💰 ยอดรวมทั้งร้าน: ${sum} บาท</div>
+      `;
+
+      $('overallArea').innerHTML = tableHtml;
+    }
+
+    function search2() {
+      $('search2Result').innerHTML = '';
+      let total = 0;
+
+      for (const item of allData) {
+        if ($('win2top').value && item.lottery_number === $('win2top').value && item.amount_top) {
+          let p = item.amount_top * 70;
+          if (isHalf(item.lottery_number)) p /= 2;
+          total += p;
+          $('search2Result').innerHTML += `<div class="result">${item.buyer_name} ${mark(item.lottery_number)} บน จ่าย ${p}</div>`;
+        }
+        if ($('win2bottom').value && item.lottery_number === $('win2bottom').value && item.amount_bottom) {
+          let p = item.amount_bottom * 70;
+          if (isHalf(item.lottery_number)) p /= 2;
+          total += p;
+          $('search2Result').innerHTML += `<div class="result">${item.buyer_name} ${mark(item.lottery_number)} ล่าง จ่าย ${p}</div>`;
+        }
+      }
+
+      if (total === 0) {
+        $('search2Result').innerHTML = '<div class="total">ไม่พบเลขนี้ในระบบ</div>';
+      } else {
+        $('search2Result').innerHTML += `<div class="total">รวมจ่าย ${total}</div>`;
+      }
+    }
+
+    function search3() {
+      $('search3Result').innerHTML = '';
+      let total = 0;
+      const w = $('win3').value;
+      const n = normalize3(w);
+
+      for (const item of allData) {
+        if (item.lottery_number === w && item.amount_straight) {
+          let p = item.amount_straight * 500;
+          if (isHalf(w)) p /= 2;
+          total += p;
+          $('search3Result').innerHTML += `<div class="result">${item.buyer_name} ${mark(w)} ตรง จ่าย ${p}</div>`;
+        }
+        if (item.amount_tod && normalize3(item.lottery_number) === n) {
+          let p = item.amount_tod * 100;
+          if (isHalf(w)) p /= 2;
+          total += p;
+          $('search3Result').innerHTML += `<div class="result">${item.buyer_name} ${mark(item.lottery_number)} โต๊ด จ่าย ${p}</div>`;
+        }
+      }
+
+      if (total === 0) {
+        $('search3Result').innerHTML = '<div class="total">ไม่พบเลขนี้ในระบบ</div>';
+      } else {
+        $('search3Result').innerHTML += `<div class="total">รวมจ่าย ${total}</div>`;
+      }
+    }
+
+    function saveImage(el, filename) {
+      el.classList.add('hide-for-image');
+      html2canvas(el, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
+        allowTaint: true
+      }).then((canvas) => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `${filename || 'result'}-${new Date().getTime()}.png`;
+        link.click();
+        el.classList.remove('hide-for-image');
+      }).catch((err) => {
+        console.error('Error saving image:', err);
+        showMessage('เกิดข้อผิดพลาดในการบันทึกภาพ', 'error');
+        el.classList.remove('hide-for-image');
+      });
+    }
+
+    function exportCSV() {
+      if (!allData.length) {
+        showMessage('ไม่มีข้อมูลให้ส่งออก', 'error');
+        return;
+      }
+
+      let csv = 'ชื่อ,เลข,ประเภท,บน,ล่าง,ตรง,โต๊ด\n';
+      allData.forEach((item) => {
+        csv += `${item.buyer_name},${item.lottery_number},${item.lottery_type},${item.amount_top},${item.amount_bottom},${item.amount_straight},${item.amount_tod}\n`;
+      });
+
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = `summary-${new Date().getTime()}.csv`;
+      a.click();
+
+      showMessage('ส่งออก Excel สำเร็จ!', 'success');
+    }
+
+    async function clearAll() {
+      const confirmFirstTime = confirm('ล้างข้อมูลทั้งหมด?');
+      if (!confirmFirstTime) return;
+
+      const confirmSecondTime = confirm('ยืนยันอีกครั้ง?');
+      if (!confirmSecondTime) return;
+
+      $('clear-all-btn').disabled = true;
+      $('clear-all-btn').innerHTML = '<span class="loading"></span> กำลังล้าง...';
+
+      for (const item of allData) {
+        const result = await window.dataSdk.delete(item);
+        if (!result.isOk) {
+          console.error('Error deleting item:', result.error);
+        }
+      }
+
+      halfNums = [];
+      $('clear-all-btn').disabled = false;
+      $('clear-all-btn').innerHTML = '🧹 ล้างข้อมูลทั้งหมด';
+      showMessage('ล้างข้อมูลเรียบร้อย!', 'success');
+    }
+
+    function showMessage(msg, type) {
+      const alert = document.createElement('div');
+      alert.style.cssText =
+        'position: fixed; top: 20px; right: 20px; background: ' +
+        (type === 'error' ? '#ffebee' : '#e8f5e9') +
+        '; color: ' +
+        (type === 'error' ? '#d32f2f' : '#2e7d32') +
+        '; padding: 12px 16px; border-radius: 8px; z-index: 1000; max-width: 400px; border-left: 4px solid ' +
+        (type === 'error' ? '#d32f2f' : '#2e7d32');
+      alert.textContent = msg;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 3000);
+    }
+
+    initializeApp();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf38584e76b894b',t:'MTc3MTMxMjgyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
