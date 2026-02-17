@@ -8,28 +8,23 @@
 
 <style>
 body{margin:0;padding:12px;font-family:sans-serif;background:#f2f6f3}
-.container{max-width:1400px;margin:auto;background:#fff;padding:16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.container{max-width:1200px;margin:auto;background:#fff;padding:16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
 h2,h3,h4{text-align:center;margin:10px 0}
-input,select,button{width:100%;padding:10px;font-size:15px;margin:4px 0;border-radius:8px;border:1px solid #ccc}
-button{background:#2e7d32;color:#fff;border:none}
+input,button{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:1px solid #ccc}
+button{background:#2e7d32;color:#fff;border:none;cursor:pointer}
 button.danger{background:#d9534f}
 button.gray{background:#888}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.flex{display:flex;gap:6px}
-.number-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
 .card{border:1px dashed #bbb;padding:12px;margin-top:16px;border-radius:14px;background:#fafafa}
-.table-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{border:1px solid #ccc;padding:4px 6px;text-align:center;line-height:1.2}
+th,td{border:1px solid #ccc;padding:4px 6px;text-align:center}
 th{background:#f1f1f1}
-.total{text-align:left;font-size:16px;margin-top:6px}
-.blessing{text-align:center;margin-top:8px;font-style:italic;color:#2e7d32}
-.result{background:#eef6ff;padding:6px;border-radius:6px;margin-top:4px}
-.warn{background:#fff8e1;padding:10px;border-radius:10px}
-.tag{background:#fdecea;color:#d9534f;padding:4px 10px;border-radius:20px;margin:4px;display:inline-block}
-.half{color:#d9534f;font-weight:bold}
+.total{text-align:left;margin-top:6px;font-weight:bold}
+.blessing{text-align:center;margin-top:6px;font-style:italic;color:#2e7d32}
 .no-print{display:table-cell}
 .hide-for-image .no-print{display:none !important}
+.half{color:#d9534f;font-weight:bold}
+.tag{background:#fdecea;color:#d9534f;padding:4px 8px;border-radius:20px;margin:4px;display:inline-block}
 hr{margin:20px 0}
 </style>
 </head>
@@ -42,20 +37,21 @@ hr{margin:20px 0}
 
 <input id="buyer" placeholder="ชื่อคนซื้อ">
 
+<h3>เพิ่มเลข 2 ตัว</h3>
 <div class="grid">
-  <select id="digit"></select>
-  <select id="type"></select>
+<input id="num2" placeholder="เลข 2 ตัว">
+<input id="amt2top" type="number" placeholder="บน">
+<input id="amt2bottom" type="number" placeholder="ล่าง">
 </div>
+<button onclick="add2()">➕ เพิ่มเลข 2 ตัว</button>
 
-<div class="number-grid" id="numbers"></div>
-
-<div id="money1"><input id="amount1" type="number" placeholder="จำนวนเงิน"></div>
-<div id="money2" class="flex" style="display:none">
-  <input id="amountA" type="number" placeholder="ช่องที่ 1">
-  <input id="amountB" type="number" placeholder="ช่องที่ 2">
+<h3>เพิ่มเลข 3 ตัว</h3>
+<div class="grid">
+<input id="num3" placeholder="เลข 3 ตัว">
+<input id="amt3straight" type="number" placeholder="ตรง">
+<input id="amt3tod" type="number" placeholder="โต๊ด">
 </div>
-
-<button onclick="addItems()">➕ เพิ่มรายการ</button>
+<button onclick="add3()">➕ เพิ่มเลข 3 ตัว</button>
 
 <hr>
 
@@ -65,13 +61,11 @@ hr{margin:20px 0}
 <hr>
 
 <h3>⚠️ เลขเงื่อนไขจ่ายครึ่งเดียว</h3>
-<div class="warn">
-  <div class="flex">
-    <input id="halfInput" placeholder="เลข 2 หรือ 3 ตัว">
-    <button onclick="addHalf()">เพิ่ม</button>
-  </div>
-  <div id="halfList"></div>
+<div class="grid">
+<input id="halfInput" placeholder="เลข">
+<button onclick="addHalf()">เพิ่ม</button>
 </div>
+<div id="halfList"></div>
 
 <hr>
 
@@ -79,216 +73,200 @@ hr{margin:20px 0}
 
 <h4>เลข 2 ตัว</h4>
 <div class="grid">
-  <input id="win2top" placeholder="เลขบน">
-  <input id="win2bottom" placeholder="เลขล่าง">
+<input id="win2top" placeholder="บน">
+<input id="win2bottom" placeholder="ล่าง">
 </div>
 <button onclick="search2()">ค้นหา</button>
 <div id="search2Result" class="card"></div>
-<button onclick="saveImage(search2Result)">📸 บันทึกภาพ</button>
-
-<hr>
 
 <h4>เลข 3 ตัว</h4>
 <input id="win3" placeholder="เลข 3 ตัว">
 <button onclick="search3()">ค้นหา</button>
 <div id="search3Result" class="card"></div>
-<button onclick="saveImage(search3Result)">📸 บันทึกภาพ</button>
 
 <hr>
 
 <h3>🌍 สรุปภาพรวมทั้งร้าน</h3>
 <div id="overallArea"></div>
-<button onclick="saveImage(overallArea)">📸 บันทึกภาพ</button>
-<button class="gray" onclick="exportCSV()">📄 ส่งออก Excel</button>
+<button class="gray" onclick="saveImage(overallArea)">📸 บันทึกภาพ</button>
 
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-
 const $=id=>document.getElementById(id);
 
-let data=JSON.parse(localStorage.getItem("lottery_data"))||{};
-let halfNums=JSON.parse(localStorage.getItem("half_nums"))||[];
+let data=JSON.parse(localStorage.getItem("lottery_data")||"{}");
+let halfNums=JSON.parse(localStorage.getItem("half_nums")||"[]");
 
-function save(){localStorage.setItem("lottery_data",JSON.stringify(data));localStorage.setItem("half_nums",JSON.stringify(halfNums));}
-
-for(let i=0;i<10;i++) $("numbers").innerHTML+=`<input placeholder="เลข">`;
-
-$("digit").innerHTML=`<option value="2">เลข 2 ตัว</option><option value="3">เลข 3 ตัว</option>`;
-$("digit").onchange=updateType;
-$("type").onchange=updateMoney;
-
-function updateType(){
-  $("type").innerHTML="";
-  if($("digit").value==="2"){
-    ["2 ตัวบน","2 ตัวล่าง","2 ตัวบน/ล่าง"].forEach(t=>$("type").innerHTML+=`<option>${t}</option>`);
-  }else{
-    ["3 ตัวตรง","3 ตัวโต๊ด","3 ตัวตรง/โต๊ด"].forEach(t=>$("type").innerHTML+=`<option>${t}</option>`);
-  }
-  updateMoney();
-}
-function updateMoney(){
-  if($("type").value.includes("/")){
-    $("money1").style.display="none";
-    $("money2").style.display="flex";
-  }else{
-    $("money1").style.display="block";
-    $("money2").style.display="none";
-  }
-}
-updateType();
-
-function normalize3(n){return n.split("").sort().join("")}
-function isHalf(num){
-  return halfNums.some(h=>h.length===num.length&&(h.length===2?h===num:normalize3(h)===normalize3(num)));
-}
-function mark(n){return isHalf(n)?`<span class="half">${n}</span>`:n}
-
-window.addItems=()=>{
-  const name=$("buyer").value.trim();
-  if(!name) return alert("กรอกชื่อคนซื้อ");
-  const nums=[...$("numbers").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
-  if(!nums.length) return alert("กรอกเลขอย่างน้อย 1 ช่อง");
-  data[name]=data[name]||{items:[],total:0};
-  nums.forEach(n=>{
-    let r={num:n,top:0,bottom:0,straight:0,tod:0},s=0;
-    const t=$("type").value;
-    if(t==="2 ตัวบน"){r.top=+$("amount1").value;s=r.top}
-    if(t==="2 ตัวล่าง"){r.bottom=+$("amount1").value;s=r.bottom}
-    if(t==="2 ตัวบน/ล่าง"){r.top=+$("amountA").value;r.bottom=+$("amountB").value;s=r.top+r.bottom}
-    if(t==="3 ตัวตรง"){r.straight=+$("amount1").value;s=r.straight}
-    if(t==="3 ตัวโต๊ด"){r.tod=+$("amount1").value;s=r.tod}
-    if(t==="3 ตัวตรง/โต๊ด"){r.straight=+$("amountA").value;r.tod=+$("amountB").value;s=r.straight+r.tod}
-    data[name].items.push(r);data[name].total+=s;
-  });
-  clearInputs();save();render();
-};
-
-function clearInputs(){
-  [...$("numbers").querySelectorAll("input")].forEach(i=>i.value="");
-  $("amount1").value=$("amountA").value=$("amountB").value="";
+function save(){
+localStorage.setItem("lottery_data",JSON.stringify(data));
+localStorage.setItem("half_nums",JSON.stringify(halfNums));
 }
 
 function discount(t){return t>=500?0.15:t>=200?0.10:0}
+function normalize3(n){return n.split("").sort().join("")}
+function isHalf(n){
+return halfNums.some(h=>h.length===n.length&&(h.length===2?h===n:normalize3(h)===normalize3(n)));
+}
+function mark(n){return isHalf(n)?`<span class="half">${n}</span>`:n}
+
+function add2(){
+const name=$("buyer").value.trim();
+if(!name)return alert("กรอกชื่อก่อน");
+const num=$("num2").value.trim();
+if(!num)return;
+data[name]=data[name]||[];
+data[name].push({num,top:+$("amt2top").value||0,bottom:+$("amt2bottom").value||0,straight:0,tod:0});
+save();render();
+$("num2").value="";$("amt2top").value="";$("amt2bottom").value="";
+}
+
+function add3(){
+const name=$("buyer").value.trim();
+if(!name)return alert("กรอกชื่อก่อน");
+const num=$("num3").value.trim();
+if(!num)return;
+data[name]=data[name]||[];
+data[name].push({num,top:0,bottom:0,straight:+$("amt3straight").value||0,tod:+$("amt3tod").value||0});
+save();render();
+$("num3").value="";$("amt3straight").value="";$("amt3tod").value="";
+}
 
 function render(){
-  $("personArea").innerHTML="";
-  let overall={};
-  for(const name in data){
-    const d=data[name],dis=discount(d.total),net=d.total-(d.total*dis);
-    $("personArea").innerHTML+=`
-    <div class="card" id="bill-${name}">
-      <b>${name}</b>
-      <div class="table-wrap">
-      <table>
-      <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th class="no-print">ลบ</th></tr>
-      ${d.items.map((i,idx)=>`
-        <tr>
-          <td>${mark(i.num)}</td>
-          <td>${i.top||"-"}</td>
-          <td>${i.bottom||"-"}</td>
-          <td>${i.straight||"-"}</td>
-          <td>${i.tod||"-"}</td>
-          <td class="no-print"><button onclick="removeItem('${name}',${idx})">❌</button></td>
-        </tr>`).join("")}
-      </table></div>
-      <div class="total">รวม ${d.total} | ลด ${dis*100}% | <b>สุทธิ ${net}</b></div>
-      <div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
-      <button onclick="saveImage(document.getElementById('bill-${name}'))">📸 บันทึกภาพบิล</button>
-    </div>`;
-    d.items.forEach(i=>{
-      overall[i.num]=overall[i.num]||{top:0,bottom:0,straight:0,tod:0};
-      overall[i.num].top+=i.top;overall[i.num].bottom+=i.bottom;
-      overall[i.num].straight+=i.straight;overall[i.num].tod+=i.tod;
-    });
-  }
-  renderOverall(overall);
+$("personArea").innerHTML="";
+let overall={};
+for(const name in data){
+let total=0;
+let html=`<div class="card"><b>${name}</b><table>
+<tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th class="no-print">ลบ</th></tr>`;
+data[name].forEach((i,idx)=>{
+let s=i.top+i.bottom+i.straight+i.tod;
+total+=s;
+overall[i.num]=overall[i.num]||{top:0,bottom:0,straight:0,tod:0};
+overall[i.num].top+=i.top;
+overall[i.num].bottom+=i.bottom;
+overall[i.num].straight+=i.straight;
+overall[i.num].tod+=i.tod;
+html+=`<tr>
+<td>${mark(i.num)}</td>
+<td>${i.top||"-"}</td>
+<td>${i.bottom||"-"}</td>
+<td>${i.straight||"-"}</td>
+<td>${i.tod||"-"}</td>
+<td class="no-print"><button onclick="removeItem('${name}',${idx})">❌</button></td>
+</tr>`;
+});
+let dis=discount(total);
+let net=total-(total*dis);
+html+=`</table>
+<div class="total">รวม ${total} | ลด ${dis*100}% | สุทธิ ${net}</div>
+<div class="blessing">✨ ขอให้โชคดีและถูกรางวัลทุกงวดค่ะ ✨</div>
+<button onclick="saveImage(this.parentElement)">📸 บันทึกภาพบิล</button>
+</div>`;
+$("personArea").innerHTML+=html;
 }
-
-window.removeItem=(n,i)=>{data[n].items.splice(i,1);if(!data[n].items.length)delete data[n];save();render();};
+renderOverall(overall);
+}
 
 function renderOverall(o){
-  if(!Object.keys(o).length){$("overallArea").innerHTML="<div class='card'>ยังไม่มีข้อมูล</div>";return;}
-  let sum=0;
-  $("overallArea").innerHTML=`
-  <div class="table-wrap"><table>
-  <tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>รวม</th></tr>
-  ${Object.keys(o).map(k=>{const s=o[k].top+o[k].bottom+o[k].straight+o[k].tod;sum+=s;
-    return `<tr><td>${mark(k)}</td><td>${o[k].top||"-"}</td><td>${o[k].bottom||"-"}</td><td>${o[k].straight||"-"}</td><td>${o[k].tod||"-"}</td><td>${s}</td></tr>`}).join("")}
-  </table></div><div class="total">💰 ยอดรวมทั้งร้าน: ${sum} บาท</div>`;
+if(!Object.keys(o).length){$("overallArea").innerHTML="ยังไม่มีข้อมูล";return;}
+let sum=0;
+let html="<table><tr><th>เลข</th><th>บน</th><th>ล่าง</th><th>ตรง</th><th>โต๊ด</th><th>รวม</th></tr>";
+for(const k in o){
+let s=o[k].top+o[k].bottom+o[k].straight+o[k].tod;
+sum+=s;
+html+=`<tr>
+<td>${mark(k)}</td>
+<td>${o[k].top||"-"}</td>
+<td>${o[k].bottom||"-"}</td>
+<td>${o[k].straight||"-"}</td>
+<td>${o[k].tod||"-"}</td>
+<td>${s}</td></tr>`;
+}
+html+="</table><div class='total'>ยอดรวมทั้งร้าน "+sum+"</div>";
+$("overallArea").innerHTML=html;
 }
 
-window.addHalf=()=>{const v=$("halfInput").value.trim();if(v&&!halfNums.includes(v)){halfNums.push(v);$("halfInput").value="";save();renderHalf();}};
-window.removeHalf=v=>{halfNums=halfNums.filter(x=>x!==v);save();renderHalf();};
-function renderHalf(){$("halfList").innerHTML=halfNums.map(n=>`<span class="tag">${n} <button onclick="removeHalf('${n}')">❌</button></span>`).join("");}
-renderHalf();
+function removeItem(name,idx){
+data[name].splice(idx,1);
+if(!data[name].length)delete data[name];
+save();render();
+}
 
-window.search2=()=>{
-  $("search2Result").innerHTML="";let total=0;
-  for(const n in data){
-    data[n].items.forEach(i=>{
-      if($("win2top").value&&i.num===$("win2top").value&&i.top){
-        let p=i.top*70;if(isHalf(i.num))p/=2;total+=p;
-        $("search2Result").innerHTML+=`<div class="result">${n} ${mark(i.num)} บน จ่าย ${p}</div>`;
-      }
-      if($("win2bottom").value&&i.num===$("win2bottom").value&&i.bottom){
-        let p=i.bottom*70;if(isHalf(i.num))p/=2;total+=p;
-        $("search2Result").innerHTML+=`<div class="result">${n} ${mark(i.num)} ล่าง จ่าย ${p}</div>`;
-      }
-    });
-  }
-  $("search2Result").innerHTML+=`<div class="total">รวมจ่าย ${total}</div>`;
-};
+function addHalf(){
+const v=$("halfInput").value.trim();
+if(!v)return;
+if(!halfNums.includes(v))halfNums.push(v);
+$("halfInput").value="";
+save();renderHalf();render();
+}
 
-window.search3=()=>{
-  $("search3Result").innerHTML="";let total=0;
-  const w=$("win3").value,n=normalize3(w);
-  for(const name in data){
-    data[name].items.forEach(i=>{
-      if(i.num===w&&i.straight){
-        let p=i.straight*500;if(isHalf(w))p/=2;total+=p;
-        $("search3Result").innerHTML+=`<div class="result">${name} ${mark(w)} ตรง จ่าย ${p}</div>`;
-      }
-      if(i.tod&&normalize3(i.num)===n){
-        let p=i.tod*100;if(isHalf(w))p/=2;total+=p;
-        $("search3Result").innerHTML+=`<div class="result">${name} ${mark(i.num)} โต๊ด จ่าย ${p}</div>`;
-      }
-    });
-  }
-  $("search3Result").innerHTML+=`<div class="total">รวมจ่าย ${total}</div>`;
-};
+function renderHalf(){
+$("halfList").innerHTML=halfNums.map(n=>`<span class="tag">${n} <button onclick="removeHalf('${n}')">❌</button></span>`).join("");
+}
 
-window.saveImage=el=>{
-  el.classList.add("hide-for-image");
-  html2canvas(el).then(c=>{
-    const a=document.createElement("a");
-    a.href=c.toDataURL();
-    a.download="result.png";
-    a.click();
-    el.classList.remove("hide-for-image");
-  });
-};
+function removeHalf(n){
+halfNums=halfNums.filter(x=>x!==n);
+save();renderHalf();render();
+}
 
-window.exportCSV=()=>{
-  let csv="เลข,บน,ล่าง,ตรง,โต๊ด,รวม\n";
-  document.querySelectorAll("#overallArea tr").forEach((r,i)=>{
-    if(i) csv+=[...r.children].map(td=>td.innerText).join(",")+"\n";
-  });
-  const a=document.createElement("a");
-  a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
-  a.download="summary.csv";
-  a.click();
-};
+function search2(){
+let total=0;$("search2Result").innerHTML="";
+for(const name in data){
+data[name].forEach(i=>{
+if($("win2top").value&&i.num===$("win2top").value&&i.top){
+let p=i.top*70;if(isHalf(i.num))p/=2;total+=p;
+$("search2Result").innerHTML+=`${name} ${mark(i.num)} บน จ่าย ${p}<br>`;
+}
+if($("win2bottom").value&&i.num===$("win2bottom").value&&i.bottom){
+let p=i.bottom*70;if(isHalf(i.num))p/=2;total+=p;
+$("search2Result").innerHTML+=`${name} ${mark(i.num)} ล่าง จ่าย ${p}<br>`;
+}
+});
+}
+$("search2Result").innerHTML+=`<div class='total'>รวมจ่าย ${total}</div>`;
+}
 
-window.clearAll=()=>{
-  if(confirm("ล้างข้อมูลทั้งหมด?")&&confirm("ยืนยันอีกครั้ง")){
-    data={};halfNums=[];localStorage.clear();render();renderHalf();
-  }
-};
+function search3(){
+let total=0;$("search3Result").innerHTML="";
+const w=$("win3").value;
+for(const name in data){
+data[name].forEach(i=>{
+if(i.num===w&&i.straight){
+let p=i.straight*500;if(isHalf(w))p/=2;total+=p;
+$("search3Result").innerHTML+=`${name} ${mark(w)} ตรง จ่าย ${p}<br>`;
+}
+if(i.tod&&normalize3(i.num)===normalize3(w)){
+let p=i.tod*100;if(isHalf(w))p/=2;total+=p;
+$("search3Result").innerHTML+=`${name} ${mark(i.num)} โต๊ด จ่าย ${p}<br>`;
+}
+});
+}
+$("search3Result").innerHTML+=`<div class='total'>รวมจ่าย ${total}</div>`;
+}
+
+function saveImage(el){
+el.classList.add("hide-for-image");
+html2canvas(el).then(c=>{
+const a=document.createElement("a");
+a.href=c.toDataURL();
+a.download="result.png";
+a.click();
+el.classList.remove("hide-for-image");
+});
+}
+
+function clearAll(){
+if(confirm("ล้างข้อมูลทั้งหมด?")&&confirm("ยืนยันอีกครั้ง?")){
+data={};halfNums=[];
+localStorage.removeItem("lottery_data");
+localStorage.removeItem("half_nums");
+render();renderHalf();
+}
+}
 
 render();
-});
+renderHalf();
 </script>
 </body>
 </html>
